@@ -1,0 +1,273 @@
+A51 MACRO ASSEMBLER  CLOCK                                                                10/08/2020 17:39:14 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\clock.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE clock.a51 SET(SMALL) DEBUG PRINT(.\Listings\clock.lst) OBJECT(.\Objects
+                      \clock.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     org 0h
+0000 020050            2             ljmp main
+                       3             
+0003                   4     org 0003H
+0003 120179            5             lcall delay
+0006 12026C            6             lcall incmin
+0009 32                7             reti
+                       8     
+000B                   9     org 000BH
+000B 12021B           10             lcall clksec
+000E 32               11             reti
+                      12     
+0013                  13     org 0013H
+0013 120179           14             lcall delay
+0016 75393C           15             mov 39H,#60
+0019                  16             catdog:
+0019 12026C           17             lcall incmin
+001C D539FA           18             djnz 39H,catdog
+001F 32               19             reti
+                      20     
+                      21             
+0050                  22     org 0050H
+0050                  23             main:
+0050 75A887           24             mov IE,#10000111B
+0053 851189           25             mov TMOD,00010001B
+                      26             
+0056 758C00           27             mov TH0,#00
+0059 758A00           28             mov TL0,#00
+005C D28C             29             setb TR0
+005E D28A             30             setb TCON.2
+0060 D288             31             setb TCON.0
+0062 1201AF           32             lcall initclk
+                      33             
+0065                  34             plop:
+0065 4006             35             jc show
+0067 7D77             36             mov R5,#119
+0069 75380E           37             mov 38H,#14
+006C D3               38             setb C
+006D                  39             show:
+006D C282             40             clr P0.2
+006F C284             41             clr P0.4
+0071 D281             42             setb P0.1
+0073 D283             43             setb P0.3
+0075 8890             44             mov P1,R0
+0077 8AA0             45             mov P2,R2
+0079 120179           46             lcall delay
+007C C281             47             clr P0.1
+007E C283             48             clr P0.3
+0080 D282             49             setb P0.2
+0082 D284             50             setb P0.4
+0084 8990             51             mov P1,R1
+0086 8BA0             52             mov P2,R3
+0088 120179           53             lcall delay
+008B 80D8             54             sjmp plop
+                      55             
+                      56             
+00A1                  57     org 0A1h
+A51 MACRO ASSEMBLER  CLOCK                                                                10/08/2020 17:39:14 PAGE     2
+
+00A1 C0F9A4B0         58             table: DB 0C0H,0F9H,0A4H,0B0H,99H,92H,82H,0F8H,80H,90H
+00A5 999282F8                
+00A9 8090                    
+                      59                     
+00BC                  60     org 0BCh
+00BC                  61             disp:
+00BC 8850             62             mov 50H,R0
+00BE 8951             63             mov 51H,R1
+00C0 8A52             64             mov 52H,R2
+00C2 8B53             65             mov 53H,R3
+00C4 9000A1           66             mov DPTR, #table
+00C7 E8               67             mov A,R0
+00C8 6003             68             jz mat0
+00CA A3               69             fog0:inc DPTR
+00CB D8FD             70             djnz R0,fog0
+00CD                  71             mat0:
+00CD E4               72             clr A
+00CE 93               73             movc A,@A+DPTR
+00CF F8               74             mov R0,A
+                      75     
+00D0 9000A1           76             mov DPTR, #table
+00D3 E9               77             mov A,R1
+00D4 6003             78             jz mat1
+00D6 A3               79             fog1:inc DPTR
+00D7 D9FD             80             djnz R1,fog1
+00D9                  81             mat1:
+00D9 E4               82             clr A
+00DA 93               83             movc A,@A+DPTR
+00DB F9               84             mov R1,A
+                      85             
+00DC 9000A1           86             mov DPTR, #table
+00DF EA               87             mov A,R2
+00E0 6003             88             jz mat2
+00E2 A3               89             fog2:inc DPTR
+00E3 DAFD             90             djnz R2,fog2
+00E5                  91             mat2:
+00E5 E4               92             clr A
+00E6 93               93             movc A,@A+DPTR
+00E7 FA               94             mov R2,A
+                      95             
+00E8 9000A1           96             mov DPTR, #table
+00EB EB               97             mov A,R3
+00EC 6003             98             jz mat3
+00EE A3               99             fog3:inc DPTR
+00EF DBFD            100             djnz R3,fog3
+00F1                 101             mat3:
+00F1 E4              102             clr A
+00F2 93              103             movc A,@A+DPTR
+00F3 FB              104             mov R3,A
+00F4 22              105             ret
+                     106             
+010D                 107     org 010Dh
+010D 8000            108             inct: sjmp begin
+010F                 109             begin:
+010F 754002          110             mov 40H,#02
+0112 A850            111             mov R0,50H
+0114 A951            112             mov R1,51H
+0116 AA52            113             mov R2,52H
+0118 AB53            114             mov R3,53H
+011A D54001          115             num1: djnz 40H,done
+011D 22              116               ret
+011E 0541            117              done:inc 41H
+0120 D555F7          118                       djnz 55H,num1
+0123 754100          119                       mov 41H,#0
+0126 75550A          120                       mov 55H,#10
+0129 0542            121                       inc 42H
+A51 MACRO ASSEMBLER  CLOCK                                                                10/08/2020 17:39:14 PAGE     3
+
+012B D556EC          122                       djnz 56H,num1
+012E 754200          123                       mov 42H,#0
+0131 755606          124                       mov 56H,#6
+0134 08              125                       inc R0
+0135 D557E2          126                       djnz 57H,num1
+0138 7800            127                       mov R0,#0
+013A 75570A          128                       mov 57H,#10
+013D 09              129                       inc R1
+013E D558D9          130                       djnz 58H,num1
+0141 7900            131                       mov R1,#0
+0143 755806          132                       mov 58H,#6
+0146 0A              133                       inc R2
+0147 D54504          134                       djnz 45H,cont1
+014A 1201AF          135                       lcall initclk
+014D 22              136                       ret
+014E D559C9          137             cont1:djnz 59H,num1
+0151 7A00            138                       mov R2,#0
+0153 75590A          139                       mov 59H,#10
+0156 0B              140                       inc R3
+0157 D560C0          141                       djnz 60H,num1
+015A 1201AF          142                       lcall initclk
+015D 22              143                       ret
+                     144                     
+0179                 145     org 179H
+0179                 146             delay:
+0179 C28F            147             clr TF1
+017B C28E            148             clr TR1
+017D 758DFF          149             mov TH1,#0FFH
+0180 758B00          150             mov TL1,#000H
+0183 D28E            151             setb TR1
+0185 308FFD          152             bob:jnb TF1,bob
+0188 22              153             ret
+                     154             
+01AF                 155     org 1AFH
+01AF 7800            156             initclk: mov R0,#0
+01B1 7900            157             mov R1,#0
+01B3 7A00            158             mov R2,#0
+01B5 7B00            159             mov R3,#0
+01B7 755000          160             mov 50H,#0
+01BA 755100          161             mov 51H,#0
+01BD 755200          162             mov 52H,#0
+01C0 755300          163             mov 53H,#0
+01C3 75550A          164             mov 55H,#10
+01C6 755606          165             mov 56H,#6
+01C9 75570A          166             mov 57H,#10
+01CC 755806          167             mov 58H,#6
+01CF 75590A          168             mov 59H,#10
+01D2 756003          169             mov 60H,#3
+01D5 754100          170             mov 41H,#0
+01D8 754200          171             mov 42H,#0
+01DB 754518          172             mov 45H,#24
+01DE 22              173             ret
+                     174             
+021B                 175     org 21BH
+021B                 176             clksec:
+021B 758C00          177             mov TH0,#00
+021E 758A00          178             mov TL0,#00
+0221 8003            179             sjmp cat
+0223                 180             tree:
+0223 7D77            181             mov R5,#119
+0225                 182             ball:
+0225 32              183             reti
+0226 DDFD            184             cat: djnz R5,ball
+0228 D538F8          185             djnz 38H,tree
+022B C3              186             clr C
+022C 12010D          187             lcall inct
+A51 MACRO ASSEMBLER  CLOCK                                                                10/08/2020 17:39:14 PAGE     4
+
+022F 1200BC          188             lcall disp
+0232 B2B7            189             cpl P3.7
+0234 22              190             ret
+                     191     
+026C                 192     org 26CH
+026C 7E3C            193             incmin:mov R6,#60
+026E 12010D          194             incsec: lcall inct
+0271 1200BC          195             lcall disp
+0274 DEF8            196             djnz R6,incsec
+0276 22              197             ret
+                     198             
+                     199     end
+A51 MACRO ASSEMBLER  CLOCK                                                                10/08/2020 17:39:14 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BALL . . . . . . .  C ADDR   0225H   A   
+BEGIN. . . . . . .  C ADDR   010FH   A   
+BOB. . . . . . . .  C ADDR   0185H   A   
+CAT. . . . . . . .  C ADDR   0226H   A   
+CATDOG . . . . . .  C ADDR   0019H   A   
+CLKSEC . . . . . .  C ADDR   021BH   A   
+CONT1. . . . . . .  C ADDR   014EH   A   
+DELAY. . . . . . .  C ADDR   0179H   A   
+DISP . . . . . . .  C ADDR   00BCH   A   
+DONE . . . . . . .  C ADDR   011EH   A   
+FOG0 . . . . . . .  C ADDR   00CAH   A   
+FOG1 . . . . . . .  C ADDR   00D6H   A   
+FOG2 . . . . . . .  C ADDR   00E2H   A   
+FOG3 . . . . . . .  C ADDR   00EEH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+INCMIN . . . . . .  C ADDR   026CH   A   
+INCSEC . . . . . .  C ADDR   026EH   A   
+INCT . . . . . . .  C ADDR   010DH   A   
+INITCLK. . . . . .  C ADDR   01AFH   A   
+MAIN . . . . . . .  C ADDR   0050H   A   
+MAT0 . . . . . . .  C ADDR   00CDH   A   
+MAT1 . . . . . . .  C ADDR   00D9H   A   
+MAT2 . . . . . . .  C ADDR   00E5H   A   
+MAT3 . . . . . . .  C ADDR   00F1H   A   
+NUM1 . . . . . . .  C ADDR   011AH   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PLOP . . . . . . .  C ADDR   0065H   A   
+SHOW . . . . . . .  C ADDR   006DH   A   
+TABLE. . . . . . .  C ADDR   00A1H   A   
+TCON . . . . . . .  D ADDR   0088H   A   
+TF1. . . . . . . .  B ADDR   0088H.7 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+TREE . . . . . . .  C ADDR   0223H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
